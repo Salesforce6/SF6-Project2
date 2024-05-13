@@ -1,0 +1,76 @@
+<apex:page standardController="Order" recordSetVar="ords" extensions="OrderController">
+    <header>
+        <apex:stylesheet value="{!$Resource.oppStyle}"/>
+        <apex:slds />
+    </header>
+    <!--logo that leads to the homepage when clicked -->
+    <a href="/apex/home"> 
+        <apex:image styleClass="bannerImg" value="{!$Resource.FBCBanner}"/>
+    </a>
+    <!-- Nav Bar -->
+    <apex:panelGrid columns="6" styleClass="NavBarStyle">
+        <apex:outputLink value="/apex/home">HOME</apex:outputLink>
+        <apex:outputLink value="/apex/AccountTable">Account</apex:outputLink>
+        <apex:outputLink value="/apex/ContactsTable">Contacts</apex:outputLink>
+        <apex:outputLink value="/apex/LeadsTable">Leads</apex:outputLink>
+        <apex:outputLink value="/apex/vfOpportunityTable">Opportunity</apex:outputLink>
+        <apex:outputLink value="/apex/vfOrderTable">Orders</apex:outputLink>
+    </apex:panelGrid>
+
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlock >
+                <apex:outputText value="View: "/>
+                <apex:selectList value="{!filterId}" size="1">
+                    <apex:actionSupport event="onchange" rerender="order_table"/>
+                    <apex:selectOptions value="{!listviewoptions}"/>
+                </apex:selectList>
+            </apex:pageBlock>
+
+            <apex:pageBlockSection >
+                <apex:pageBlockTable value="{!ords}" var="ord" id="order_table">
+                    <apex:column headerValue="Order Number">
+                        <apex:commandLink action="{!goToOrder}" value="{!ord.OrderNumber}">
+                            <apex:param name="orderId" value="{!ord.Id}" assignTo="{!orderId}"/>
+                        </apex:commandLink>
+                    </apex:column>
+
+                    <apex:column headerValue="Account Name">
+                        <apex:outputField value="{!ord.AccountId}"/>
+                    </apex:column>
+
+                    <apex:column headerValue="Contract Number">
+                        <apex:outputField value="{!ord.contractId}"/>
+                    </apex:column>
+
+                    <apex:column headerValue="Order Amount">
+                        <apex:outputField value="{!ord.totalAmount}"/>
+                    </apex:column>
+
+                    <apex:column headerValue="Order Start Date">
+                        <apex:outputField value="{!ord.effectiveDate}"/>
+                    </apex:column>
+
+                    <apex:column headerValue="Order Status">
+                        <apex:outputField value="{!ord.status}"/>
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:commandLink value="Delete" action="{!deleteOrder}">
+                            <apex:param name="orderId" value="{!ord.Id}" assignTo="{!orderId}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Previous" action="{!previous}" rendered="{!HasPrevious}"/>
+                <apex:commandButton value="Next" action="{!next}" rendered="{!HasNext}"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection >
+                <apex:commandButton value="Create New Order Record" action="{!createOrder}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

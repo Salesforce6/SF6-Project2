@@ -1,0 +1,74 @@
+<apex:page standardController="Lead" recordSetVar="leads" lightningStylesheets="true" extensions="LeadsControllerExtension">
+    <!-- Company heading -->
+    <header>
+        <apex:stylesheet value="{!$Resource.oppStyle}" />
+        <apex:slds />
+    </header>
+    <!--logo that leads to the homepage when clicked -->
+    <a href="/apex/home"> 
+        <apex:image styleClass="bannerImg" value="{!$Resource.FBCBanner}"/>
+    </a>
+
+    <!-- Nav Bar -->
+    <apex:panelGrid columns="6" styleClass="NavBarStyle">
+        <apex:outputLink value="/apex/home">HOME</apex:outputLink>
+        <apex:outputLink value="/apex/AccountTable">Account</apex:outputLink>
+        <apex:outputLink value="/apex/ContactsTable">Contacts</apex:outputLink>
+        <apex:outputLink value="/apex/LeadsTable">Leads</apex:outputLink>
+        <apex:outputLink value="/apex/vfOpportunityTable">Opportunity</apex:outputLink>
+        <apex:outputLink value="/apex/vfOrderTable">Orders</apex:outputLink>
+    </apex:panelGrid>
+
+
+    <!-- <apex:outputField> -->
+        <apex:form >
+            <apex:messages rendered="true"/>
+            <apex:pageBlock mode="inlineEdit">
+
+                <!-- drop down list to View all accounts, recently viewed, etc. -->
+                <apex:selectList value="{!filterId}" size="1">
+                    <apex:actionSupport event="onchange" rerender="recordsTable" />
+                    <apex:selectOptions value="{!listviewoptions}" />
+                </apex:selectList>
+                <apex:commandButton action="{!createLead}" value="Create new Lead" title="Create new Lead" />
+                <!-- start record overview table -->
+                <apex:pageBlockSection >
+                    <apex:pageBlockTable value="{!leads}" var="lead" id="recordsTable">
+
+                        <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                            hideOnEdit="editButton" 
+                            event="ondblclick" 
+                            changedStyleClass="myBoldClass" 
+                            resetFunction="resetInlineEdit"/>
+
+                        <apex:column value="{!lead.FirstName}" />
+                        <apex:column value="{!lead.LastName}" />
+                        <apex:column value="{!lead.Company}" />
+                        <apex:column value="{!lead.LeadSource}" />
+                        <apex:column value="{!lead.Status}" />
+      
+                        
+                        <!-- new column for deleting a record -->
+                        <apex:column headerValue="Action">
+                            <apex:commandLink action="{!deleteLead}" value="Delete" reRender="true">
+                                <apex:param name="leadId" value="{!lead.Id}" assignTo="{!leadId}"/>
+                            </apex:commandLink>  
+                        </apex:column>
+                        
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Previous" action="{!previous}" />
+
+                    <apex:commandButton action="{!edit}" id="editButton" value="Edit"/>
+                    <apex:commandButton onclick="resetInlineEdit()" id="cancelButton" value="Cancel" style="display:none"/>
+                    <apex:commandButton action="{!save}" id="saveButton" value="Save" style="display:none"/>
+
+                    <apex:commandButton value="Next" action="{!next}" />
+                </apex:pageBlockButtons>
+
+            </apex:pageBlock>
+        </apex:form>
+    <!-- </apex:outputField> -->
+</apex:page>

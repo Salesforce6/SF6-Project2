@@ -1,0 +1,91 @@
+<apex:page standardController="Opportunity" recordSetVar="opps" extensions="OpportunityRecordExtensions">
+    <header>
+        <apex:stylesheet value="{!$Resource.oppStyle}" />
+        <apex:slds />
+    </header>
+    <!--logo that leads to the homepage when clicked -->
+    <a href="/apex/home"> 
+        <apex:image styleClass="bannerImg" value="{!$Resource.FBCBanner}"/>
+    </a>
+
+    <!-- Nav Bar -->
+    <apex:panelGrid columns="6" styleClass="NavBarStyle">
+        <apex:outputLink value="/apex/home">HOME</apex:outputLink>
+        <apex:outputLink value="/apex/AccountTable">Account</apex:outputLink>
+        <apex:outputLink value="/apex/ContactsTable">Contacts</apex:outputLink>
+        <apex:outputLink value="/apex/LeadsTable">Leads</apex:outputLink>
+        <apex:outputLink value="/apex/vfOpportunityTable">Opportunity</apex:outputLink>
+        <apex:outputLink value="/apex/vfOrderTable">Orders</apex:outputLink>
+    </apex:panelGrid>
+    <apex:outputPanel id="rerenderlist">
+        <apex:form >
+            <apex:pageMessages rendered="rerenderlist"></apex:pageMessages>
+            <apex:pageBlock >
+
+                <!-- Selection Box-->
+                <div id="selectionContainer">
+                    <div id="selectionStyle">
+                        <h1 id="h1Text">Opportunity Records</h1>
+                        <apex:panelGrid columns="2">
+                            <apex:panelGroup styleClass="tableHeaderStyle" layout="block">
+                                <apex:selectList value="{!filterId}" styleClass="selectListStyle" size="1">
+                                    <apex:actionSupport event="onchange" reRender="rerenderlist" />
+                                    <apex:selectOptions value="{!listviewoptions}" />
+                                </apex:selectList>
+                            </apex:panelGroup>
+                            <apex:panelGroup styleClass="tableHeaderStyle" layout="block">
+                                <apex:commandButton action="{!createRecord}" value="Create New Opportunity Record"/>
+                            </apex:panelGroup>
+                        </apex:panelGrid>
+                    </div>
+                </div>
+
+                <!-- Table Box-->
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageBlockTable value="{!opps}" var="opp" id="rerenderTable">
+                        <apex:column headerValue="Name">
+                            <apex:outputLink value="apex/vfOpportunityRecord">
+                                {!opp.name}
+                                <apex:param name="id" value="{!opp.id}" />
+                            </apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Account Name" >
+                            <apex:outputField value="{!opp.Account.Name}"/>
+                        </apex:column>
+                        <apex:column value="{!opp.Amount}" />
+                        <apex:column value="{!opp.Type}" />
+                        <apex:column value="{!opp.StageName}" />
+                        <apex:column value="{!opp.CloseDate}" />
+                        <apex:column >
+                            <apex:commandLink action="{!deleteRecord}" value="Delete">
+                                <apex:param name="OpportunityId" value="{!opp.Id}" assignTo="{!OpportunityId}" />
+                            </apex:commandLink>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+
+                <!-- Pagination-->
+                <apex:panelGrid columns="3" styleClass="bottomPanelItems">
+                    <apex:panelGroup >
+                        <apex:outputText value="Records per Page: "/>
+                        <apex:selectList value="{! PageSize }" size="1">
+                            <apex:selectOption itemValue="5" itemLabel="5" />
+                            <apex:selectOption itemValue="10" itemLabel="10" />
+                            <apex:selectOption itemValue="20" itemLabel="20" />
+                            <apex:actionSupport event="onchange" reRender="rerenderlist" />
+                        </apex:selectList>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:outputText value="Page: "/>
+                        <apex:outputText value="{!IF(CEILING(ResultSize/PageSize) != 0, PageNumber, 0)} of {!CEILING(ResultSize/PageSize)}"/>
+                    </apex:panelGroup>
+                    <apex:panelGroup >
+                        <apex:commandLink style="Padding: 10px;" action="{!Previous}" value="Previous" rendered="{!HasPrevious}" />
+                        <apex:commandLink style="Padding: 10px;" action="{! Next }" value="Next »" rendered="{! HasNext }" />
+                    </apex:panelGroup>
+
+                </apex:panelGrid>
+            </apex:pageBlock>
+        </apex:form>
+    </apex:outputPanel>
+</apex:page>

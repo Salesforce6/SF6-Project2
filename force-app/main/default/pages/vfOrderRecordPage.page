@@ -1,0 +1,78 @@
+<apex:page standardController="Order" extensions="OrderController,OrderProductExtension">
+    <header>
+        <apex:stylesheet value="{!$Resource.oppStyle}"/>
+        <apex:slds />
+    </header>
+    <!--logo that leads to the homepage when clicked -->
+    <a href="/apex/home"> 
+        <apex:image styleClass="bannerImg" value="{!$Resource.FBCBanner}"/>
+    </a>
+    <!-- Nav Bar -->
+    <apex:panelGrid columns="6" styleClass="NavBarStyle">
+        <apex:outputLink value="/apex/home">HOME</apex:outputLink>
+        <apex:outputLink value="/apex/AccountTable">Account</apex:outputLink>
+        <apex:outputLink value="/apex/ContactsTable">Contacts</apex:outputLink>
+        <apex:outputLink value="/apex/LeadsTable">Leads</apex:outputLink>
+        <apex:outputLink value="/apex/vfOpportunityTable">Opportunity</apex:outputLink>
+        <apex:outputLink value="/apex/vfOrderTable">Orders</apex:outputLink>
+    </apex:panelGrid>
+
+    <apex:form >
+        <apex:pageBlock mode="edit" rendered="{!IF(Order.OrderNumber == NULL, 'true', 'false')}">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveOrder}"/>
+                <apex:commandButton value="Cancel" action="{!cancelInsert}" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Create an Order Record" columns="2">
+                <apex:inputField value="{!Order.AccountId}"/>
+                <apex:inputField value="{!Order.EffectiveDate}"/>
+                <apex:inputField value="{!Order.ContractId}"/>
+                <apex:inputField value="{!Order.Status}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <apex:pageBlock rendered="{!IF(Order.OrderNumber == NULL, 'false', 'true')}">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Go Back" action="{!cancelInsert}" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Order Number: {!Order.OrderNumber}" columns="2" rendered="{!IF(Order.OrderNumber == NULL, 'false', 'true')}">
+                <apex:outputField value="{!Order.AccountId}"/>
+                <apex:outputField value="{!Order.EffectiveDate}"/>
+                <apex:outputField value="{!Order.ContractId}"/>
+                <apex:outputField value="{!Order.Status}"/>
+                <apex:outputField value="{!Order.TotalAmount}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlock >
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!addOrdProd}" value="Create new Order Product">
+                        <apex:param name="ordId" value="{!Order.Id}" assignTo="{!ordId}"/>
+                    </apex:commandButton>
+                </apex:pageBlockButtons>
+                <apex:pageBlockTable value="{!Order.OrderItems}" var="ordProd">
+                    <apex:column headerValue="Order Product">
+                        <apex:commandLink action="{!goToOrdProd}" value="{!ordProd.Product2.Name}">
+                            <apex:param name="OrdProdId" value="{!ordProd.Id}" assignTo="{!OrdProdId}"/>
+                            <apex:param name="ordProdId" value="{!ordProd.Id}" assignTo="{!ordId}"/>
+                        </apex:commandLink>
+                    </apex:column>
+
+                    <apex:column headerValue="Quantity">
+                        <apex:outputField value="{!ordProd.Quantity}">
+                        </apex:outputField>
+                    </apex:column>
+
+                    <apex:column headerValue="Unit Price">
+                        <apex:outputField value="{!ordProd.UnitPrice}"/>
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:commandButton action="{!removeOrdProd}" value="Remove">
+                            <apex:param name="OrdProdId" value="{!ordProd.Id}" assignTo="{!OrdProdId}"/>
+                        </apex:commandButton>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

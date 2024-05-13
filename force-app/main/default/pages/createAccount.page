@@ -1,0 +1,38 @@
+<apex:page standardController="Account" standardStylesheets="true" extensions="createAccountExtension">
+    
+    <!-- Company heading -->
+    <header>
+        <apex:stylesheet value="{!$Resource.oppStyle}" />
+        <apex:slds />
+    </header>
+     <!--logo that leads to the homepage when clicked -->
+     <a href="/apex/home"> 
+        <apex:image styleClass="bannerImg" value="{!$Resource.FBCBanner}"/>
+    </a>
+    <!-- Nav Bar -->
+    <apex:panelGrid columns="6" styleClass="NavBarStyle">
+        <apex:outputLink value="/apex/home">HOME</apex:outputLink>
+        <apex:outputLink value="/apex/AccountTable">Account</apex:outputLink>
+        <apex:outputLink value="/apex/ContactsTable">Contacts</apex:outputLink>
+        <apex:outputLink value="/apex/LeadsTable">Leads</apex:outputLink>
+        <apex:outputLink value="/apex/vfOpportunityTable">Opportunity</apex:outputLink>
+        <apex:outputLink value="/apex/vfOrderTable">Orders</apex:outputLink>
+    </apex:panelGrid>
+
+    <apex:form >
+        <apex:pageBlock >
+                <h1><b>Create New Account</b></h1>
+            <apex:messages rendered="true"/>
+            <apex:pageBlockSection >
+                <apex:inputField value="{!Account.Name}" />
+                <apex:inputField value="{!Account.annualRevenue}"/>
+                <apex:inputField value="{!Account.industry}"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveAndRedirect}" />
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
